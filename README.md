@@ -4,4 +4,4 @@
 3. `python -m venv venv`
 4. `.\venv\Scripts\activate`
 5. `pip install -r requirements.txt`
-6. `Verify that dependancies has been installed by using 'pip list'`
+6. `Verify that dependencies has been installed by using 'pip list'`
