@@ -1,7 +1,7 @@
 import pygame as pg
 import configparser
 
-import utils
+from utils import draw_gradient
 import constants
 from camera_movement import CameraMovement
 
@@ -39,7 +39,7 @@ screen = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption("Tower-Defense")
 
 if IS_GRADIENT_BACKGROUND:
-    utils.draw_gradient(
+    draw_gradient.draw_gradient(
         screen,
         [int(color) for color in config["Display"]["GRADIENT_START"].split(", ")],
         [int(color) for color in config["Display"]["GRADIENT_END"].split(", ")],
