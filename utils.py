@@ -18,11 +18,19 @@ def draw_gradient(surface: pg.Surface, start_color: list[int], end_color: list[i
                 start_color[i] + (end_color[i] - start_color[i]) * y // height
                 for i in range(3)
             ]
-            pg.draw.line(surface, color, (0, y), (width, y))
+            pg.draw.line(surface,   # surface to draw on
+                         color,     # list with RGB values
+                         (0, y),    # start_pos: from 0 to y
+                         (width, y) # end_pos: from width to y
+                         )
     elif direction == "horizontal":
         for x in range(width):
             color = [
                 start_color[i] + (end_color[i] - start_color[i]) * x // width
                 for i in range(3)
             ]
-            pg.draw.line(surface, color, (x, 0), (x, height))
+            pg.draw.line(surface,    # surface to draw on
+                         color,      # list with RGB values
+                         (x, 0),     # start_pos: from x to 0
+                         (x, height) # end_pos: from x to height
+                         )
