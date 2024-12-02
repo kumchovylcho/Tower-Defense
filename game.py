@@ -4,6 +4,7 @@ import configparser
 from utils import draw_gradient
 import constants
 from camera_movement import CameraMovement
+from field.tile import Tile
 
 
 # load user settings
@@ -30,11 +31,6 @@ camera = CameraMovement(camera_x=constants.INITIAL_CAMERA_X,
                         drag_momentum_threshold=constants.DRAG_MOMENTUM_THRESHOLD
                         )
 
-# load tile
-scaled_image = pg.transform.scale(
-    pg.image.load("assets/blocks/grass_2.png"),
-    (constants.TILE_SIZE, constants.TILE_SIZE)
-)
 
 # Screen settings
 WIDTH, HEIGHT = int(config["Display"]["WIDTH"]), int(config["Display"]["HEIGHT"])
@@ -45,6 +41,35 @@ pg.display.set_caption("Tower-Defense")
 if IS_GRADIENT_BACKGROUND:
     GRADIENT_START = [int(color) for color in config["Display"]["GRADIENT_START"].split(", ")]
     GRADIENT_END = [int(color) for color in config["Display"]["GRADIENT_END"].split(", ")]
+
+
+
+
+GRID_ROWS = 10  # Number of rows in the grid
+GRID_COLS = 10  # Number of columns in the grid
+GRID_OFFSET = 50  # Offset to start drawing the grid from the top-left corner
+# Prepare tile settings
+HOVER_COLOR = (255, 255, 0, 128)  # Yellow with transparency
+# load tile
+scaled_image = pg.transform.scale(
+    pg.image.load("assets/blocks/grass_2.png").convert_alpha(),
+    (constants.TILE_SIZE, constants.TILE_SIZE)
+)
+
+
+tile_matrix = [
+    [
+        Tile(
+            image=scaled_image,
+            position=(GRID_OFFSET + col * constants.TILE_SIZE, GRID_OFFSET + row * constants.TILE_SIZE),
+            hover_color=HOVER_COLOR,
+            # add border roundings if needed
+        )
+        for col in range(GRID_COLS)
+    ]
+    for row in range(GRID_ROWS)
+]
+
 
 
 # Main loop
@@ -72,6 +97,11 @@ while running:
             GRADIENT_END,
             config["Display"]["GRADIENT_DIRECTION"].lower()
         )
+
+    # will be moved to a method
+    for row in tile_matrix:
+        for tile in row:
+            tile.render_block(screen)
 
     # Update display
     pg.display.flip()
