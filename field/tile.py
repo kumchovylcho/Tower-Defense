@@ -40,6 +40,15 @@ class Tile:
 
         return overlay
 
+    @staticmethod
+    def create_masked_hover_overlay(size: tuple, hover_color: tuple, mask: pg.Mask):
+        # apply mask directly
+        mask_surface = mask.to_surface(setcolor=hover_color, unsetcolor=(0, 0, 0, 0))
+        masked_overlay = pg.Surface(size, pg.SRCALPHA)
+        masked_overlay.blit(mask_surface, (0, 0))
+
+        return masked_overlay
+
     def apply_border_radius(self, **roundings):
         # rounded mask with transparent background
         rounded_mask = pg.Surface(self.image_rect.size, pg.SRCALPHA)
@@ -65,32 +74,23 @@ class Tile:
 
         return rounded_image, rounded_mask
 
-    def create_masked_hover_overlay(self, size: tuple, hover_color: tuple, mask: pg.Mask):
-        # create a transparent overlay
-        self.prepare_regular_hover_overlay(hover_color, size)
-
-        # apply mask directly
-        mask_surface = mask.to_surface(setcolor=hover_color, unsetcolor=(0, 0, 0, 0))
-        masked_overlay = pg.Surface(size, pg.SRCALPHA)
-        masked_overlay.blit(mask_surface, (0, 0))
-
-        return masked_overlay
-
     def mouse_collides_with_block(self):
         mouse_pos = pg.mouse.get_pos()
         # means we are far away from the block
         if not self.image_rect.collidepoint(mouse_pos):
             return False
 
-        # means that we are right above the block and the edges are not rounded
+        # means that we are right above the block and the edges are not rounded,
+        # so we don't need to do the expensive calculations for the mask. We return True
+        # since we are not dealing with any masks here
         if not self.has_roundings:
             return True
 
-        # now we are very close to the block or right above it
         relative_mouse_pos = (
             mouse_pos[0] - self.image_rect.x,
             mouse_pos[1] - self.image_rect.y
         )
+        # now we are very close to the block or right above it and the block has rounded edges
         # check for perfect pixel collision
         if not self.rounded_mask.get_at(relative_mouse_pos):
             return False
@@ -101,5 +101,4 @@ class Tile:
         surface.blit(image_to_show, self.image_rect.topleft)
 
         if self.mouse_collides_with_block():
-            get_image_rect_for_overlay = self.image_rect if not self.has_roundings else self.rounded_image_rect
-            surface.blit(self.overlay, get_image_rect_for_overlay.topleft)
+            surface.blit(self.overlay, self.image_rect.topleft)
