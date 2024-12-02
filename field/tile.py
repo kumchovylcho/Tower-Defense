@@ -15,19 +15,18 @@ class Tile:
              border_bottom_right_radius
         """
         self.image = image
-        self.image_rect = image.get_rect()
-        self.x_pos, self.y_pos, = position
+        self.image_rect = image.get_rect(topleft=position)
         self.overlay = self.prepare_regular_hover_overlay(hover_color, self.image_rect.size)
+        self.has_roundings = len(border_roundings) > 0
 
-        if border_roundings:
-            self.border_roundings = border_roundings
+        if self.has_roundings:
             self.rounded_image, self.rounded_mask_surface = self.apply_border_radius(**border_roundings)
 
             # pixel perfect mask needed for mouse collisions
             self.rounded_mask = pg.mask.from_surface(self.rounded_mask_surface)
             # needed to check if it's close enough, so we can check for the mask collision.
             # this is needed so it requires less resources
-            self.rounded_image_rect = self.rounded_image.get_rect(topleft=(self.x_pos, self.y_pos))
+            self.rounded_image_rect = self.rounded_image.get_rect(topleft=position)
             self.overlay = self.create_masked_hover_overlay(self.rounded_image.get_size(),
                                                             hover_color,
                                                             self.rounded_mask
@@ -42,14 +41,27 @@ class Tile:
         return overlay
 
     def apply_border_radius(self, **roundings):
-        # Create a rounded mask
+        # rounded mask with transparent background
         rounded_mask = pg.Surface(self.image_rect.size, pg.SRCALPHA)
-        pg.draw.rect(rounded_mask, (255, 255, 255, 255), self.image_rect, **roundings)
+        # transparent
+        rounded_mask.fill((0, 0, 0, 0))
 
-        # Create a new surface for the result
+        # draw the rounded rect
+        pg.draw.rect(
+            rounded_mask,
+            (255, 255, 255, 255), # transparent
+            (0, 0, self.image_rect.width, self.image_rect.height),
+            **roundings
+        )
+
+        # new surface for the rounded image
         rounded_image = pg.Surface(self.image_rect.size, pg.SRCALPHA)
-        rounded_image.blit(self.image, (0, 0))  # Draw the image
-        rounded_image.blit(rounded_mask, (0, 0), special_flags=pg.BLEND_RGBA_MIN)  # Apply mask
+        # make it transparent
+        rounded_image.fill((0, 0, 0, 0))
+
+        # keep only the visible parts of the image and apply the mask
+        rounded_image.blit(self.image, (0, 0))
+        rounded_image.blit(rounded_mask, (0, 0), special_flags=pg.BLEND_RGBA_MULT)
 
         return rounded_image, rounded_mask
 
@@ -70,6 +82,10 @@ class Tile:
         if not self.image_rect.collidepoint(mouse_pos):
             return False
 
+        # means that we are right above the block and the edges are not rounded
+        if not self.has_roundings:
+            return True
+
         # now we are very close to the block or right above it
         relative_mouse_pos = (
             mouse_pos[0] - self.image_rect.x,
@@ -81,10 +97,9 @@ class Tile:
         return True
 
     def render_block(self, surface: pg.Surface):
-        has_roundings = hasattr(self, "border_roundings")
-        image_to_show = self.rounded_image if has_roundings else self.image
+        image_to_show = self.rounded_image if self.has_roundings else self.image
         surface.blit(image_to_show, self.image_rect.topleft)
 
         if self.mouse_collides_with_block():
-            get_image_rect_for_overlay = self.image_rect if has_roundings else self.rounded_image_rect
+            get_image_rect_for_overlay = self.image_rect if not self.has_roundings else self.rounded_image_rect
             surface.blit(self.overlay, get_image_rect_for_overlay.topleft)
