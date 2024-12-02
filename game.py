@@ -30,6 +30,11 @@ camera = CameraMovement(camera_x=constants.INITIAL_CAMERA_X,
                         drag_momentum_threshold=constants.DRAG_MOMENTUM_THRESHOLD
                         )
 
+# load tile
+scaled_image = pg.transform.scale(
+    pg.image.load("assets/blocks/grass_2.png"),
+    (constants.TILE_SIZE, constants.TILE_SIZE)
+)
 
 # Screen settings
 WIDTH, HEIGHT = int(config["Display"]["WIDTH"]), int(config["Display"]["HEIGHT"])
@@ -37,14 +42,10 @@ IS_GRADIENT_BACKGROUND = bool(int(config["Display"]["GRADIENT"]))
 REGULAR_BACKGROUND_COLOR = [int(color) for color in config["Display"]["BACKGROUND_COLOR"].split(", ")]
 screen = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption("Tower-Defense")
-
 if IS_GRADIENT_BACKGROUND:
-    draw_gradient.draw_gradient(
-        screen,
-        [int(color) for color in config["Display"]["GRADIENT_START"].split(", ")],
-        [int(color) for color in config["Display"]["GRADIENT_END"].split(", ")],
-        config["Display"]["GRADIENT_DIRECTION"].lower()
-    )
+    GRADIENT_START = [int(color) for color in config["Display"]["GRADIENT_START"].split(", ")]
+    GRADIENT_END = [int(color) for color in config["Display"]["GRADIENT_END"].split(", ")]
+
 
 # Main loop
 running = True
@@ -64,6 +65,13 @@ while running:
     # fill background with some color if the user wants so
     if not IS_GRADIENT_BACKGROUND:
         screen.fill(REGULAR_BACKGROUND_COLOR)
+    else:
+        draw_gradient.draw_gradient(
+            screen,
+            GRADIENT_START,
+            GRADIENT_END,
+            config["Display"]["GRADIENT_DIRECTION"].lower()
+        )
 
     # Update display
     pg.display.flip()
