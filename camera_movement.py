@@ -13,6 +13,7 @@ class CameraMovement:
                  drag_friction: float,
                  drag_momentum_threshold: float
                  ):
+
         self.camera_x = camera_x
         self.camera_y = camera_y
         self.zoom_level = zoom_level
