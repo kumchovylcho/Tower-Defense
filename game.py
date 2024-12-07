@@ -3,8 +3,8 @@ import configparser
 
 from utils import draw_gradient
 import constants
-from camera_movement import CameraMovement
 from field.tile import Tile
+from field.field import Field
 
 
 # load user settings
@@ -17,19 +17,6 @@ pg.init()
 
 # Clock for capping FPS
 clock = pg.time.Clock()
-
-
-# camera settings
-camera = CameraMovement(camera_x=constants.INITIAL_CAMERA_X,
-                        camera_y=constants.INITIAL_CAMERA_Y,
-                        zoom_level=constants.ZOOM_LEVEL,
-                        min_zoom=constants.MIN_ZOOM,
-                        max_zoom=constants.MAX_ZOOM,
-                        zoom_speed=constants.ZOOM_SPEED,
-                        zoom_step_speed=constants.ZOOM_STEP_SPEED,
-                        drag_friction=constants.DRAG_FRICTION_WHEN_DRAG_ENDS,
-                        drag_momentum_threshold=constants.DRAG_MOMENTUM_THRESHOLD
-                        )
 
 
 # Screen settings
@@ -45,9 +32,10 @@ if IS_GRADIENT_BACKGROUND:
 
 
 
-GRID_ROWS = 10  # Number of rows in the grid
-GRID_COLS = 10  # Number of columns in the grid
-GRID_OFFSET = 50  # Offset to start drawing the grid from the top-left corner
+matrix_size = 700
+matrix_surface = pg.Surface((matrix_size, matrix_size))
+GRID_ROWS = matrix_surface.get_width() // constants.TILE_SIZE
+GRID_COLS = matrix_surface.get_height() // constants.TILE_SIZE
 # Prepare tile settings
 HOVER_COLOR = (255, 255, 0, 128)  # Yellow with transparency
 # load tile
@@ -57,18 +45,18 @@ scaled_image = pg.transform.scale(
 )
 
 
-tile_matrix = [
+field = Field([
     [
         Tile(
             image=scaled_image,
-            position=(GRID_OFFSET + col * constants.TILE_SIZE, GRID_OFFSET + row * constants.TILE_SIZE),
+            position=(col * constants.TILE_SIZE, row * constants.TILE_SIZE),
             hover_color=HOVER_COLOR,
-            # add border roundings if needed
         )
         for col in range(GRID_COLS)
     ]
     for row in range(GRID_ROWS)
-]
+    ]
+)
 
 
 
@@ -78,14 +66,7 @@ while running:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
-        elif event.type == pg.MOUSEWHEEL:
-            camera.adjust_zoom_level(event.y)
-        elif event.type == pg.MOUSEBUTTONDOWN:
-            camera.activate_dragging_camera(event.button == 1, False)
-        elif event.type == pg.MOUSEBUTTONUP:
-            camera.activate_dragging_camera(False, event.button == 1)
 
-    camera.move_camera()
 
     # fill background with some color if the user wants so
     if not IS_GRADIENT_BACKGROUND:
@@ -98,10 +79,8 @@ while running:
             config["Display"]["GRADIENT_DIRECTION"].lower()
         )
 
-    # will be moved to a method
-    for row in tile_matrix:
-        for tile in row:
-            tile.render_block(screen)
+    field.render_tiles(screen)
+
 
     # Update display
     pg.display.flip()
