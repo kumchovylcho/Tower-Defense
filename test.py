@@ -21,11 +21,19 @@ if IS_GRADIENT_BACKGROUND:
 pg.init()
 pg.font.init()
 
-button = Button((200, 300),
-            pg.transform.scale(pg.image.load("assets/buttons/back_button_1.png").convert_alpha(), (500, 200)),
-            pg.image.load("assets/buttons/back_button_2.png").convert_alpha()
-       )
+background_menu = pg.transform.scale(pg.image.load("assets/buttons/menu_background.jpg"), (400, 400))
 
+button = Button((650, 400),
+                pg.transform.scale(pg.image.load("assets/buttons/back_button_1.png").convert_alpha(), (300, 100)),
+                pg.transform.scale(pg.image.load("assets/buttons/back_button_2.png").convert_alpha(), (300, 100)
+                                   ))
+
+button2 = Button((650, 480),
+                 pg.transform.scale(pg.image.load("assets/buttons/exit_button_1.png").convert_alpha(), (300, 100)),
+                 pg.transform.scale(pg.image.load("assets/buttons/exit_button_2.png").convert_alpha(), (300, 100)
+                                    ))
+
+buttons = [button, button2]
 
 running = True
 while running:
@@ -33,7 +41,7 @@ while running:
         if event.type == pg.QUIT:
             running = False
 
-        button.handle_event(event)
+        # button.handle_event(event)
 
     if not IS_GRADIENT_BACKGROUND:
         screen.fill(REGULAR_BACKGROUND_COLOR)
@@ -45,16 +53,14 @@ while running:
             config["Display"]["GRADIENT_DIRECTION"].lower()
         )
 
-
-    # Clear screen
-
+    # draw menu background on the screen
+    screen.blit(background_menu, (600, 300))
     # Render button
-    button.render(screen)
+    for button in buttons:
+        button.render(screen)
 
     # Update display
     pg.display.flip()
 
 # Quit Pygame
 pg.quit()
-
-

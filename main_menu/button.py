@@ -1,3 +1,5 @@
+import time
+
 import pygame as pg
 
 
@@ -12,6 +14,7 @@ class Button:
         :param position: Tuple (x, y) for the top-left corner of the button.
         :param normal_image_path: File path for the button's normal state image.
         :param hover_image_path: File path for the button's hover state image.
+
         """
 
         self.x, self.y = position
@@ -22,22 +25,7 @@ class Button:
         self.hover_image = hover_image_path
         self.hover_rect = self.hover_image.get_rect(topleft=position)
 
-        # self.callback = callback
-        # self.is_hovered = False
-
-        # Get the button's size from the image dimensions
         self.width, self.height = self.normal_image.get_size()
-
-    def render(self, screen: pg.Surface):
-        """
-        Draws the button on the screen.
-
-        :param screen: The pygame Surface to draw on.
-        """
-        if self.is_hover():
-            screen.blit(self.hover_image, (self.x, self.y))
-        else:
-            screen.blit(self.normal_image, (self.x, self.y))
 
     def is_hover(self):
         """
@@ -53,14 +41,19 @@ class Button:
                 return True
         return False
 
-
-    def handle_event(self, event: pg.event.Event):
+    def render(self, screen: pg.Surface):
         """
-        Handles mouse events for the button.
+        Draws the button on the screen.
 
-        :param event: A Pygame event (e.g., MOUSE MOTION or SEMIAUTONOMOUS).
+        :param screen: The pygame Surface to draw on.
         """
-        if event.type == pg.MOUSEMOTION:
-            self.is_hover()
+        if self.is_hover():
+            screen.blit(self.hover_image, (self.x, self.y))
+        else:
+            screen.blit(self.normal_image, (self.x, self.y))
+
+
+
+
 
 
