@@ -16,7 +16,12 @@ class Button:
         """
         self.x, self.y = position
         self.normal_image = pygame.image.load(normal_image_path).convert_alpha()
+        self.button_rect = self.normal_image.get_rect(topleft=position)
+        self.button_mask = pygame.mask.from_surface(self.normal_image)
+
         self.hover_image = pygame.image.load(hover_image_path).convert_alpha()
+        self.hover_rect = self.hover_image.get_rect(topleft=position)
+
         self.callback = callback
         self.is_hovered = False
 
@@ -40,11 +45,12 @@ class Button:
 
         :param mouse_position: Tuple (mouse_x, mouse_y).
         """
+        self.is_hovered = False
         mouse_x, mouse_y = mouse_position
-        self.is_hovered = (
-            self.x <= mouse_x <= self.x + self.width and
-            self.y <= mouse_y <= self.y + self.height
-        )
+        relative_mouse_pos = (mouse_x - self.button_rect.x, mouse_y - self.button_rect.y)
+        if 0 <= relative_mouse_pos[0] < self.button_rect.width and 0 <= relative_mouse_pos[1] < self.button_rect.height:
+            if self.button_mask.get_at(relative_mouse_pos):  # Pixel-perfect check
+                self.is_hovered = True
 
     def click(self):
         """
