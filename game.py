@@ -32,7 +32,7 @@ camera = CameraMovement(camera_x=constants.INITIAL_CAMERA_X,
 
 # load tile
 scaled_image = pg.transform.scale(
-    pg.image.load("assets/blocks/grass_2.png"),
+    pg.image.load("assets/map_images/blocks/grass_2.png"),
     (constants.TILE_SIZE, constants.TILE_SIZE)
 )
 
