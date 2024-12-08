@@ -24,6 +24,5 @@ class Tile:
         return True
 
     def render_block(self, surface_to_draw_on: pg.Surface):
-        surface_to_draw_on.blit(self.image, self.image_rect.topleft)
         if self.mouse_collides_with_block():
             surface_to_draw_on.blit(self.overlay, self.image_rect.topleft)
