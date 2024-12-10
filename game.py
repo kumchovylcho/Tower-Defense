@@ -36,29 +36,33 @@ if IS_GRADIENT_BACKGROUND:
     )
 
 
-HOVER_COLOR = (255, 255, 0, 128)  # Yellow with transparency
-# load tile
-scaled_image = pg.transform.scale(
-    pg.image.load("assets/blocks/grass_2.png").convert_alpha(),
-    (constants.TILE_SIZE, constants.TILE_SIZE)
-)
-
-
-
-field = Field((constants.FIELD_ROWS, constants.FIELD_COLS, constants.TILE_SIZE),
-              (WIDTH, HEIGHT)
-              )
-field.field = [
-        [Tile(
-            image=scaled_image,
-            position=(col * constants.TILE_SIZE + field.x_offset, row * constants.TILE_SIZE + field.y_offset),
-            hover_color=HOVER_COLOR,
+field_config = {
+    "obstacle_positions": (),
+    "obstacle_images": [
+        pg.transform.scale(
+            pg.image.load("assets/blocks/wood_on_grass.png").convert_alpha(),
+            (constants.TILE_SIZE, constants.TILE_SIZE)
         )
-        for col in range(constants.FIELD_COLS)
-        ]
-    for row in range(constants.FIELD_ROWS)
-    ]
-field.create_static_surface()
+    ],
+    "path_tile": pg.transform.scale(
+        pg.image.load("assets/blocks/stone.png").convert_alpha(),
+        (constants.TILE_SIZE, constants.TILE_SIZE)
+    ),
+    "buildable_tile": pg.transform.scale(
+        pg.image.load("assets/blocks/grass_2.png").convert_alpha(),
+        (constants.TILE_SIZE, constants.TILE_SIZE)
+    ),
+    "hover_color_on_tiles": (255, 255, 0, 128)
+}
+field = Field(
+    (
+    (20, 0), (20, 8), (6, 8), (6, 16), (15, 16), (20, 22), (30, 32)
+    ),
+    (constants.FIELD_ROWS, constants.FIELD_COLS, constants.TILE_SIZE),
+    (WIDTH, HEIGHT),
+    field_config,
+)
+field.create_field()
 
 
 # Main loop
