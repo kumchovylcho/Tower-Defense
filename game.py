@@ -3,7 +3,6 @@ import configparser
 
 from utils import draw_gradient
 import constants
-from field.tile import Tile
 from field.field import Field
 
 
@@ -48,6 +47,7 @@ field_config = {
         pg.image.load("assets/blocks/stone.png").convert_alpha(),
         (constants.TILE_SIZE, constants.TILE_SIZE)
     ),
+    "path_width": 3,
     "buildable_tile": pg.transform.scale(
         pg.image.load("assets/blocks/grass_2.png").convert_alpha(),
         (constants.TILE_SIZE, constants.TILE_SIZE)
@@ -56,7 +56,7 @@ field_config = {
 }
 field = Field(
     (
-    (20, 0), (20, 8), (6, 8), (6, 16), (15, 16), (20, 22), (30, 32)
+    (20, 0), (20, 8), (6, 8), (6, 16), (15, 16), (20, 22), (31, 32)
     ),
     (constants.FIELD_ROWS, constants.FIELD_COLS, constants.TILE_SIZE),
     (WIDTH, HEIGHT),
