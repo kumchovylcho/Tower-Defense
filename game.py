@@ -39,17 +39,17 @@ field_config = {
     "obstacle_positions": (),
     "obstacle_images": [
         pg.transform.scale(
-            pg.image.load("assets/blocks/wood_on_grass.png").convert_alpha(),
+            pg.image.load("assets/map_images/blocks/wood_on_grass.png").convert_alpha(),
             (constants.TILE_SIZE, constants.TILE_SIZE)
         )
     ],
     "path_tile": pg.transform.scale(
-        pg.image.load("assets/blocks/stone.png").convert_alpha(),
+        pg.image.load("assets/map_images/blocks/stone.png").convert_alpha(),
         (constants.TILE_SIZE, constants.TILE_SIZE)
     ),
     "path_width": 3,
     "buildable_tile": pg.transform.scale(
-        pg.image.load("assets/blocks/grass_2.png").convert_alpha(),
+        pg.image.load("assets/map_images/blocks/grass_2.png").convert_alpha(),
         (constants.TILE_SIZE, constants.TILE_SIZE)
     ),
     "hover_color_on_tiles": (255, 255, 0, 128)
