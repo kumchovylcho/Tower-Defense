@@ -1,7 +1,7 @@
 import pygame as pg
 from random import choice
 
-from .tile import Tile
+from field.tile import Tile
 
 
 class Field:
