@@ -52,7 +52,8 @@ button1 = Button(
         (300, 75),
     ),
     (5, 5),
-    (0, 0, 0, 100)
+    (0, 0, 0, 100),
+    pg.SYSTEM_CURSOR_HAND
 )
 
 button2 = Button(
@@ -66,7 +67,8 @@ button2 = Button(
         (300, 75),
     ),
     (5, 5),
-    (0, 0, 0, 100)
+    (0, 0, 0, 100),
+    pg.SYSTEM_CURSOR_CROSSHAIR
 )
 
 button3 = Button(
@@ -80,7 +82,8 @@ button3 = Button(
         (300, 75),
     ),
     (5, 5),
-    (0, 0, 0, 100)
+    (0, 0, 0, 100),
+    pg.SYSTEM_CURSOR_WAIT
 )
 
 
