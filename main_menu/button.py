@@ -3,12 +3,13 @@ import pygame as pg
 
 class Button:
     def __init__(self,
-                 position: tuple,
+                 position: tuple[int, int],
                  normal_image_path: pg.Surface,
                  hover_image_path: pg.Surface,
-                 shadow_offset=None,  # Default shadow offset
+                 shadow_offset=None,
                  shadow_color=None,
-                 is_shadow_effect=True):  # Default shadow color
+                 on_hover_cursor=None,
+                 ):
         """
         Initializes the button with specific images for normal and hover states.
 
@@ -26,46 +27,46 @@ class Button:
             - if you want to create a shadow effect provide.
                 - tuple(int, int, int, int)
 
-        :param is_shadow_effect:
-            - optional(True)
-            if you want to deactivate it, set it to False:
-            Otherwise provide shadow offset and shadow color
-
+        :param on_hover_cursor: a cursor from `pg.constants`
+            Reference: https://www.pygame.org/docs/ref/cursors.html
         """
+
         self.x, self.y = position
         self.normal_image = normal_image_path
         self.button_rect = self.normal_image.get_rect(topleft=position)
         self.button_mask = pg.mask.from_surface(self.normal_image)
 
         self.hover_image = hover_image_path
-        self.hover_rect = self.hover_image.get_rect(topleft=position)
 
         self.width, self.height = self.normal_image.get_size()
 
-        # Shadow settings
+        # shadow settings
         self.shadow_offset = shadow_offset
         self.shadow_color = shadow_color
-        self.is_shadow_effect = is_shadow_effect
-
-        # Create shadow surface
-        self.shadow = pg.Surface(self.normal_image.get_size(), flags=pg.SRCALPHA)
-
-    def shadow_effect(self, screen: pg.Surface):
-        shadow_mask = pg.mask.from_surface(self.normal_image)
-
+        self.shadow_surface = None
         if self.shadow_offset and self.shadow_color:
-            # Fill the shadow surface with transparency
-            self.shadow.fill((0, 0, 0, 0))
+            self.shadow_surface = self._create_shadow()
 
-            # Generate a surface from the mask
-            shadow_surface = shadow_mask.to_surface(setcolor=self.shadow_color, unsetcolor=(0, 0, 0, 0))
+        # cursor settings
+        self.on_hover_cursor = on_hover_cursor
+        self.is_cursor_changed = False
 
-            self.shadow.blit(shadow_surface, (0, 0))
 
-            shadow_pos = (self.x + self.shadow_offset[0], self.y + self.shadow_offset[1])
-            screen.blit(self.shadow, shadow_pos)
+    def _create_shadow(self) -> pg.Surface:
+        """
+        pre-renders the shadow effect based on the current shadow settings.
+        """
 
-    def is_hover(self):
+        shadow_mask = pg.mask.from_surface(self.normal_image)
+        shadow_surface = pg.Surface((self.width, self.height), flags=pg.SRCALPHA)
+        shadow_surface.fill((0, 0, 0, 0))
+
+        shadow_mask_surface = shadow_mask.to_surface(setcolor=self.shadow_color, unsetcolor=(0, 0, 0, 0))
+        shadow_surface.blit(shadow_mask_surface, (0, 0))
+
+        return shadow_surface
+
+    def is_hover(self) -> bool:
         """
         Updates hover state based on the mouse position.
         """
@@ -77,19 +78,38 @@ class Button:
                 return True
         return False
 
-    def render(self, screen: pg.Surface):
+    def _update_cursor(self, is_hovered: bool) -> None:
+        """
+        Updates the cursor based on whether the button is hovered.
+        """
+        if not self.on_hover_cursor:
+            return
+
+        if is_hovered:
+            if not self.is_cursor_changed:
+                pg.mouse.set_cursor(self.on_hover_cursor)
+                self.is_cursor_changed = True
+        else:
+            if self.is_cursor_changed:
+                pg.mouse.set_cursor(pg.SYSTEM_CURSOR_ARROW)
+                self.is_cursor_changed = False
+
+    def render(self, screen: pg.Surface) -> None:
         """
         Draws the button and its shadow on the screen.
 
         :param screen: The pygame Surface to draw on.
         """
-        # Draw shadow
-        if self.is_shadow_effect:
-            self.shadow_effect(screen)
+        # draw shadow
+        if self.shadow_surface:
+            shadow_pos = (self.x + self.shadow_offset[0], self.y + self.shadow_offset[1])
+            screen.blit(self.shadow_surface, shadow_pos)
 
-        # Draw button (normal or hover)
-        if self.is_hover():
-            screen.blit(self.hover_image, (self.x, self.y))
-        else:
-            screen.blit(self.normal_image, (self.x, self.y))
 
+        is_hovered = self.is_hover()
+        # draw button (normal or hover)
+        image_to_display = self.hover_image if is_hovered else self.normal_image
+        screen.blit(image_to_display, (self.x, self.y))
+
+        # updates the cursor from self.on_hover_cursor back to its default(arrow)
+        self._update_cursor(is_hovered)
