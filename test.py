@@ -2,7 +2,7 @@ import pygame as pg
 import configparser
 
 from ui.button import Button
-from utils import draw_gradient
+from game import constants
 
 # Read configuration file
 config = configparser.ConfigParser()
@@ -16,23 +16,11 @@ pg.font.init()
 clock = pg.time.Clock()
 
 # Screen dimensions and settings
-WIDTH, HEIGHT = int(config["Display"]["WIDTH"]), int(config["Display"]["HEIGHT"])
-IS_GRADIENT_BACKGROUND = bool(int(config["Display"]["GRADIENT"]))
-REGULAR_BACKGROUND_COLOR = [
-    int(color) for color in config["Display"]["BACKGROUND_COLOR"].split(", ")
-]
+WIDTH, HEIGHT = constants.DIMENSIONS
 
 screen = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption("Tower-Defense")
 
-# Gradient background colors
-if IS_GRADIENT_BACKGROUND:
-    GRADIENT_START = [
-        int(color) for color in config["Display"]["GRADIENT_START"].split(", ")
-    ]
-    GRADIENT_END = [
-        int(color) for color in config["Display"]["GRADIENT_END"].split(", ")
-    ]
 
 # Load assets
 background_menu = pg.transform.scale(
@@ -99,16 +87,6 @@ while running:
         # for button in buttons:
         #     button.handle_event(event)
 
-    # Draw the background
-    if not IS_GRADIENT_BACKGROUND:
-        screen.fill(REGULAR_BACKGROUND_COLOR)
-    else:
-        draw_gradient.draw_gradient(
-            screen,
-            GRADIENT_START,
-            GRADIENT_END,
-            config["Display"]["GRADIENT_DIRECTION"].lower(),
-        )
 
     # Draw menu background
     screen.blit(background_menu, (600, 200))
