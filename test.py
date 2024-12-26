@@ -1,7 +1,7 @@
 import pygame as pg
 import configparser
 
-from main_menu.button import Button
+from ui.button import Button
 from utils import draw_gradient
 
 # Read configuration file
@@ -36,7 +36,7 @@ if IS_GRADIENT_BACKGROUND:
 
 # Load assets
 background_menu = pg.transform.scale(
-    pg.image.load("assets/main_menu_images/background_menu_images/menu_background.jpg"),
+    pg.image.load("assets/menu_images/initial_menu/background_menu/menu_background.png"),
     (400, 500),
 )
 
@@ -44,11 +44,11 @@ background_menu = pg.transform.scale(
 button1 = Button(
     (650, 400),
     pg.transform.scale(
-        pg.image.load("assets/main_menu_images/buttons/back_button_1.png").convert_alpha(),
+        pg.image.load("assets/menu_images/initial_menu/buttons/back_button_1.png").convert_alpha(),
         (300, 80),
     ),
     pg.transform.scale(
-        pg.image.load("assets/main_menu_images/buttons/back_button_2.png").convert_alpha(),
+        pg.image.load("assets/menu_images/initial_menu/buttons/back_button_2.png").convert_alpha(),
         (300, 75),
     ),
     (5, 5),
@@ -59,11 +59,11 @@ button1 = Button(
 button2 = Button(
     (650, 480),
     pg.transform.scale(
-        pg.image.load("assets/main_menu_images/buttons/exit_button_1.png").convert_alpha(),
+        pg.image.load("assets/menu_images/initial_menu/buttons/exit_button_1.png").convert_alpha(),
         (300, 80),
     ),
     pg.transform.scale(
-        pg.image.load("assets/main_menu_images/buttons/exit_button_2.png").convert_alpha(),
+        pg.image.load("assets/menu_images/initial_menu/buttons/exit_button_2.png").convert_alpha(),
         (300, 75),
     ),
     (5, 5),
@@ -74,11 +74,11 @@ button2 = Button(
 button3 = Button(
     (650, 320),
     pg.transform.scale(
-        pg.image.load("assets/main_menu_images/buttons/shop_button_1.png").convert_alpha(),
+        pg.image.load("assets/menu_images/initial_menu/buttons/shop_button_1.png").convert_alpha(),
         (300, 80),
     ),
     pg.transform.scale(
-        pg.image.load("assets/main_menu_images/buttons/shop_button_2.png").convert_alpha(),
+        pg.image.load("assets/menu_images/initial_menu/buttons/shop_button_2.png").convert_alpha(),
         (300, 75),
     ),
     (5, 5),
