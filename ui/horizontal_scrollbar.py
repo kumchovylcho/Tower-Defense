@@ -38,6 +38,7 @@ class HorizontalVolumeScrollbar:
         if knob_border_radii is not None:
             self.knob_border_radii = knob_border_radii
 
+        self.previous_volume = initial_volume
         self.volume = initial_volume
         # if the knob is being dragged
         self.dragging = False
@@ -74,6 +75,12 @@ class HorizontalVolumeScrollbar:
                      )
         # draw the knob
         pg.draw.rect(self.screen, self.knob_color, self.knob_rect, **self.knob_border_radii)
+
+    def has_volume_changed(self) -> bool:
+        if self.volume != self.previous_volume:
+            self.previous_volume = self.volume
+            return True
+        return False
 
     def handle_event(self, event: pg.event) -> None:
         """
