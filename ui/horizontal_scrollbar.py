@@ -56,8 +56,11 @@ class HorizontalVolumeScrollbar:
     def _update_knob_position(self) -> None:
         self.knob_rect.x = self.scrollbar_x + int(self.volume * (self.scrollbar_width - self.knob_width))
 
-    def _is_clicked_inside_scrollbar(self, mouse_x: int) -> bool:
-        return self.scrollbar_x <= mouse_x <= self.scrollbar_x + self.scrollbar_width
+    def _is_clicked_inside_scrollbar(self, mouse_pos: tuple[int, int]) -> bool:
+        return (
+                self.scrollbar_x <= mouse_pos[0] <= self.scrollbar_x + self.scrollbar_width and
+                self.scrollbar_y <= mouse_pos[1] <= self.scrollbar_y + self.scrollbar_height
+        )
 
     def draw(self):
         """
@@ -81,7 +84,7 @@ class HorizontalVolumeScrollbar:
                 self.dragging = True
                 # center the knob on the mouse
                 self.offset_x = event.pos[0] - self.knob_rect.x
-            elif self._is_clicked_inside_scrollbar(event.pos[0]):
+            elif self._is_clicked_inside_scrollbar(event.pos):
                 self.update_volume(event.pos[0])
         elif event.type == pg.MOUSEBUTTONUP:
             self.dragging = False
