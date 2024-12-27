@@ -1,6 +1,8 @@
 import pygame as pg
 
-from .utils import load_image_from_assets
+import configparser
+
+from .utils import load_image_from_assets, get_config_file_path, get_volume_from_config
 from main_menu import constants as menu_constants
 from game import constants as game_constants
 from ui.horizontal_scrollbar import HorizontalVolumeScrollbar
@@ -10,6 +12,9 @@ from ui.button import Button
 class Options:
 
     def __init__(self, screen: pg.Surface):
+        self.config = configparser.ConfigParser()
+        self.config.read(get_config_file_path())
+
         self.bg_frame = load_image_from_assets(
             menu_constants.MENU_BACKGROUND_FRAME_IMAGE_PATH,
             scale_to=menu_constants.FRAME_DIMENSIONS
@@ -20,17 +25,18 @@ class Options:
         self.frame_y = window_height // 2 - self.bg_frame.get_height() // 2
 
         self.volume_scrollbar = HorizontalVolumeScrollbar(
-            screen,
-            (self.frame_x + menu_constants.SCROLLBAR_RELATIVE_TO_FRAME_X,
-             self.frame_y + menu_constants.SCROLLBAR_RELATIVE_TO_FRAME_Y,
-             menu_constants.SCROLLBAR_WIDTH,
-             menu_constants.SCROLLBAR_HEIGHT
-             ),
-            menu_constants.SCROLLBAR_COLOR,
-            (menu_constants.KNOB_WIDTH, menu_constants.KNOB_HEIGHT),
-            menu_constants.KNOB_COLOR,
+            screen=screen,
+            scrollbar_dimensions=(self.frame_x + menu_constants.SCROLLBAR_RELATIVE_TO_FRAME_X,
+                                  self.frame_y + menu_constants.SCROLLBAR_RELATIVE_TO_FRAME_Y,
+                                  menu_constants.SCROLLBAR_WIDTH,
+                                  menu_constants.SCROLLBAR_HEIGHT
+                                  ),
+            scrollbar_color=menu_constants.SCROLLBAR_COLOR,
+            knob_dimensions=(menu_constants.KNOB_WIDTH, menu_constants.KNOB_HEIGHT),
+            knob_color=menu_constants.KNOB_COLOR,
             scrollbar_border_radii=menu_constants.SCROLLBAR_BORDER_RADII,
             knob_border_radii=menu_constants.KNOB_BORDER_RADII,
+            initial_volume=get_volume_from_config(self.config)
         )
 
         self.close_btn = Button(
