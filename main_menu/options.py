@@ -64,11 +64,31 @@ class Options:
 
         self.buttons = [self.close_btn, self.ok_btn]
 
+        self.volume_font = pg.font.Font(None, menu_constants.VOLUME_TEXT_SIZE)
+        self.volume_surface = self._create_volume_surface()
+        self.volume_text_x = self._recenter_volume_surface()
+        self.volume_text_y = self.frame_y + menu_constants.VOLUME_TEXT_POSITION_Y
+
     def _render_buttons(self, surface: pg.Surface) -> None:
         for button in self.buttons:
             button.render(surface)
 
+    def _create_volume_surface(self) -> pg.Surface:
+        return self.volume_font.render(f"Volume: {int(self.volume_scrollbar.get_volume() * 100)}%",
+                                       True,
+                                       menu_constants.VOLUME_TEXT_COLOR
+                                       ).convert_alpha()
+
+    def _recenter_volume_surface(self) -> int:
+        return self.frame_x + (menu_constants.FRAME_DIMENSIONS[0] - self.volume_surface.get_width()) // 2
+
     def render(self, screen: pg.Surface) -> None:
         screen.blit(self.bg_frame, (self.frame_x, self.frame_y))
         self.volume_scrollbar.draw()
+
+        if self.volume_scrollbar.has_volume_changed():
+            self.volume_surface = self._create_volume_surface()
+            self.volume_text_x = self._recenter_volume_surface()
+
+        screen.blit(self.volume_surface, (self.volume_text_x, self.volume_text_y))
         self._render_buttons(screen)
